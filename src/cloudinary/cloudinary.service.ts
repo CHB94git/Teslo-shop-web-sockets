@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpException, Injectable } from '@nestjs/common';
 import { UploadApiErrorResponse, UploadApiResponse, v2 } from 'cloudinary';
 import * as fs from 'fs';
 import { join } from 'path';
@@ -37,7 +37,7 @@ export class CloudinaryService {
       return await this.uploadImage(file)
     } catch (error) {
       console.log({ error })
-      throw new BadRequestException();
+      throw new BadRequestException(error);
     }
   }
 
@@ -59,7 +59,7 @@ export class CloudinaryService {
       return await this.uploadImageWithBuffer(file)
     } catch (error) {
       console.log(error)
-      throw new BadRequestException('Invalid file type.');
+      throw new BadRequestException(error);
     }
   }
 
@@ -106,7 +106,8 @@ export class CloudinaryService {
 
   validateIfExistsFiles(file: Express.Multer.File) {
     if (!file) {
-      throw new BadRequestException('Something bad happened', { cause: new Error(), description: 'File is empty' })
+      // throw new BadRequestException('Something bad happened', { description: 'File is empty - Nothing to upload' })
+      throw new HttpException("File is empty - Nothing to upload", 400, { cause: new Error("Upload failed") })
     }
   }
 }

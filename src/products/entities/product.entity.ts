@@ -1,5 +1,6 @@
 import { Transform } from 'class-transformer';
-import { BeforeInsert, BeforeUpdate, Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { BeforeInsert, BeforeUpdate, Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { AuthUser } from '../../auth/entities/auth.entity';
 import { ProductImage } from './';
 
 
@@ -67,6 +68,13 @@ export class Product {
 
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
+
+  @ManyToOne(
+    () => AuthUser,
+    user => user.product,
+    { eager: true }
+  )
+  user: AuthUser
 
   @BeforeInsert()
   checkSlugToInsert() {
