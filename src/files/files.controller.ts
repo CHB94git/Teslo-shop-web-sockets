@@ -2,12 +2,17 @@ import { Controller } from '@nestjs/common';
 import { Get, Param, Post, Res, UploadedFile, UseInterceptors } from '@nestjs/common/decorators';
 import { ConfigService } from '@nestjs/config';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 import { diskStorage } from 'multer';
+import { Auth } from 'src/auth/decorators';
+import { ValidRoles } from 'src/auth/interfaces';
 import { fileFilter, fileNamer } from '../utils';
 import { FilesService } from './files.service';
 
-
+@ApiTags('Files')
+@ApiBearerAuth()
+@Auth(ValidRoles.superUser, ValidRoles.admin)
 @Controller('files')
 export class FilesController {
   constructor (

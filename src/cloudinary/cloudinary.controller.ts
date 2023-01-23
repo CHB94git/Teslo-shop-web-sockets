@@ -1,10 +1,15 @@
 import { Controller, Post, UploadedFile, UploadedFiles, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { diskStorage } from 'multer';
+import { Auth } from 'src/auth/decorators';
+import { ValidRoles } from 'src/auth/interfaces';
 import { fileFilter, fileNamer } from 'src/utils';
 import { CloudinaryService } from './cloudinary.service';
 
-
+@ApiTags('Cloudinary')
+@ApiBearerAuth()
+@Auth(ValidRoles.superUser, ValidRoles.admin)
 @Controller('cloudinary')
 export class CloudinaryController {
   constructor (private readonly cloudinaryService: CloudinaryService) {}

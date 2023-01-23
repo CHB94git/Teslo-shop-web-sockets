@@ -7,15 +7,15 @@ import toStream = require('buffer-to-stream');
 @Injectable()
 export class CloudinaryService {
 
-  private async uploadImage(file: Express.Multer.File): Promise<UploadApiResponse | UploadApiErrorResponse> {
-
+  private async uploadImage(file: Express.Multer.File, folder: string): Promise<UploadApiResponse | UploadApiErrorResponse> {
+    const { filename } = file
+    const pathImage: string = join(__dirname, '../../static/uploads', filename)
     const imageName: string = file.filename.split('.').shift()
-    const pathImage: string = join(__dirname, '../../static/uploads', file.filename)
 
     return new Promise((resolve, reject) => {
       v2.uploader.upload(pathImage, {
         resource_type: "image",
-        folder: "nestjs/teslo_shop",
+        folder,
         public_id: imageName
       }, (error, response) => {
         if (error)
@@ -34,7 +34,7 @@ export class CloudinaryService {
   async uploadImageToCloudinary(file: Express.Multer.File) {
     try {
       this.validateIfExistsFiles(file)
-      return await this.uploadImage(file)
+      return await this.uploadImage(file, "nestjs/teslo_shop")
     } catch (error) {
       console.log({ error })
       throw new BadRequestException(error);
@@ -63,19 +63,6 @@ export class CloudinaryService {
     }
   }
 
-  async multipleImageUpload(path: string, folder: string): Promise<UploadApiResponse | UploadApiErrorResponse> {
-    return new Promise((resolve, reject) => {
-      v2.uploader.upload(path, {
-        resource_type: "image",
-        folder
-      }, (error, result) => {
-        if (error)
-          return reject(error);
-        resolve(result)
-      })
-    })
-  }
-
   async multipleFilesUploader(files: Express.Multer.File[]) {
     // if (files.length === 0)
     if (!files.length)
@@ -87,8 +74,8 @@ export class CloudinaryService {
       for (const file of files) {
         const { filename } = file
         const pathImage: string = join(__dirname, '../../static/uploads', filename)
-
-        const { secure_url } = await this.multipleImageUpload(pathImage, "nestjs/teslo_shop/products")
+        const imageName: string = file.filename.split('.').shift()
+        const { secure_url } = await this.multipleImageUpload(pathImage, "nestjs/teslo_shop/products", imageName)
 
         imageUrls.push(secure_url)
 
@@ -103,6 +90,21 @@ export class CloudinaryService {
       throw new BadRequestException(error)
     }
   }
+
+  async multipleImageUpload(path: string, folder: string, imageName: string): Promise<UploadApiResponse | UploadApiErrorResponse> {
+    return new Promise((resolve, reject) => {
+      v2.uploader.upload(path, {
+        resource_type: "image",
+        folder,
+        public_id: imageName
+      }, (error, result) => {
+        if (error)
+          return reject(error);
+        resolve(result)
+      })
+    })
+  }
+
 
   validateIfExistsFiles(file: Express.Multer.File) {
     if (!file) {
