@@ -55,7 +55,7 @@ export class AuthService {
 
     return {
       ...user,
-      token: this.getJWT({ id: user.id })
+      token: this.getJWT({ id: user.id }),
     }
 
   }

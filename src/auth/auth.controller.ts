@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Post, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
@@ -23,6 +23,7 @@ export class AuthController {
 
   @ApiResponse({ status: 200, description: 'User is logged in!', type: LoginUserDto })
   @ApiResponse({ status: 400, description: 'Bad Request' })
+  @HttpCode(200)
   @Post('login')
   login(@Body() loginUserDto: LoginUserDto) {
     return this.authService.login(loginUserDto);

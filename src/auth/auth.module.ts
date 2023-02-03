@@ -16,7 +16,6 @@ import { JwtStrategy } from './strategies/jwt.strategy';
   providers: [AuthService, JwtStrategy],
   imports: [
     TypeOrmModule.forFeature([AuthUser]),
-    PassportModule.register({ defaultStrategy: 'jwt' }),
 
     JwtModule.registerAsync({
       // imports: [ConfigModule],
@@ -27,7 +26,9 @@ import { JwtStrategy } from './strategies/jwt.strategy';
           expiresIn: '1d'
         }
       })
-    })
+    }),
+
+    PassportModule.register({ defaultStrategy: 'jwt' }),
 
     // JwtModule.register({
     //   secret: configService.get<string>('JWT_SECRET'),

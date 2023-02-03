@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from '../auth/auth.module';
 import { Product, ProductImage } from './entities';
@@ -13,7 +14,8 @@ import { ProductsService } from './products.service';
       Product,
       ProductImage
     ]),
-    AuthModule
+    AuthModule,
+    PassportModule,
   ],
   exports: [ProductsService, TypeOrmModule]
 })
